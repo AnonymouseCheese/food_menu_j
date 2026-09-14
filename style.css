@@ -367,7 +367,7 @@ body {
 .slot-hint { display: none; flex: 0 0 auto; }
 #recallBody.hints-on .slot-hint { display: block; }
 
-.slot-hint svg { width: 40px; height: 40px; display: block; }
+.slot-hint svg { width: 46px; height: 46px; display: block; }
 .slot-hint .h-a { fill: var(--accent); }
 .slot-hint .h-b { fill: var(--ink); opacity: .5; }
 
@@ -410,4 +410,14 @@ body {
   letter-spacing: .01em;
   line-height: 1.3;
   white-space: nowrap;
+}
+
+/* Gaps cut into a filled shape - the spiral of the rose, the lines between
+   fingers. Painted in the slot's own background so they read as slots of
+   nothing rather than as drawn lines. */
+.slot-hint .h-cut {
+  fill: none;
+  stroke: var(--card);
+  stroke-width: 2.4;
+  stroke-linecap: round;
 }

@@ -625,15 +625,27 @@
         '<path class="h-s" d="M32 38 V57"/>'
     },
     rosemary: {
-      label: 'a woman labelled Mary, holding a rose',
+      label: 'a hand labelled Mary, holding a rose',
+      // Rose + Mary. The whole figure was dropped: at this size a head, body
+      // and arm collapsed into a smudge, and the rose read as a lollipop. A
+      // hand is enough to say "holding", and it leaves room for the rose to
+      // be drawn as an actual rose.
+      //
+      // The bud is a spiral rather than a ring of petals, deliberately - a
+      // petalled flower here would be mistaken for the sunflower two rows up.
+      //
+      // Order matters: the stem is laid down first so the hand closing over
+      // it reads as a grip rather than as something floating alongside.
       art: '<text class="h-t" x="1" y="13">Mary</text>' +
-        '<path class="h-s" d="M23 17 L29 23"/>' +
-        '<path class="h-s" d="M29 23 l-5 0.5 M29 23 l-0.5 -5"/>' +
-        '<circle class="h-b" cx="27" cy="31" r="7"/>' +
-        '<path class="h-b" d="M16 58 a11 12 0 0 1 22 0 Z"/>' +
-        '<path class="h-s" d="M37 43 L47 47"/>' +
-        '<path class="h-s" d="M50 57 V41"/>' +
-        '<circle class="h-a" cx="50" cy="36" r="6"/>'
+        '<path class="h-s" d="M19 17 Q24 26 26 34"/>' +
+        '<path class="h-s" d="M26 35 l-4.5 -3.5 M26 35 l4 -3.5"/>' +
+        '<path class="h-s" style="stroke-width:3" d="M43 22 V60"/>' +
+        '<ellipse class="h-a" cx="52" cy="34" rx="7.5" ry="3.6" transform="rotate(-22 52 34)"/>' +
+        '<circle class="h-a" cx="43" cy="15" r="10"/>' +
+        '<path class="h-cut" d="M43 7 a8 8 0 1 1 -8 8 a5.5 5.5 0 1 1 5.5 -5.5 a3 3 0 1 1 -3 3"/>' +
+        '<rect class="h-a" x="23" y="35" width="12" height="8" rx="4" transform="rotate(-22 29 39)"/>' +
+        '<rect class="h-a" x="24" y="40" width="26" height="19" rx="8"/>' +
+        '<path class="h-cut" d="M30 46 h15 M30 52.5 h15"/>'
     },
     sesame: {
       label: 'a bowl of black sesame paste',
