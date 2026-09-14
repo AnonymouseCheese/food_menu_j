@@ -361,7 +361,9 @@
     // A half can name the modes that suit it. Food lists only the three that
     // are a memory job; anything it leaves out is gone from the screen rather
     // than greyed out, because it is never coming back for that half.
-    var allowed = current.top.modes || null;
+    // A group can narrow the list further than its half does - Bread is a
+    // summary and a recall, nothing else.
+    var allowed = current.group.modes || current.top.modes || null;
     var described = describedItems().length;
 
     Array.prototype.forEach.call(document.querySelectorAll('[data-mode]'), function (btn) {
@@ -591,6 +593,67 @@
     nextCard();
   });
 
+  // ---------- hint pictures ----------
+  // Each one decodes to the word you are reaching for. Four are literal; the
+  // rosemary is a rebus - a woman labelled Mary, holding a rose.
+  //
+  // Drawn rather than photographed so there is nothing to host, nothing to
+  // fetch with the phone offline, and no image that stops matching the theme
+  // when the phone switches to dark.
+  var petals = '';
+  for (var pa = 0; pa < 360; pa += 36) {
+    petals += '<ellipse class="h-a" cx="32" cy="14" rx="4.5" ry="9" transform="rotate(' + pa + ' 32 28)"/>';
+  }
+
+  var HINTS = {
+    sunflower: {
+      label: 'a sunflower',
+      art: petals +
+        '<circle class="h-b" cx="32" cy="28" r="8"/>' +
+        '<path class="h-s" d="M32 38 V57"/>'
+    },
+    rosemary: {
+      label: 'a woman labelled Mary, holding a rose',
+      art: '<text class="h-t" x="1" y="13">Mary</text>' +
+        '<path class="h-s" d="M23 17 L29 23"/>' +
+        '<path class="h-s" d="M29 23 l-5 0.5 M29 23 l-0.5 -5"/>' +
+        '<circle class="h-b" cx="27" cy="31" r="7"/>' +
+        '<path class="h-b" d="M16 58 a11 12 0 0 1 22 0 Z"/>' +
+        '<path class="h-s" d="M37 43 L47 47"/>' +
+        '<path class="h-s" d="M50 57 V41"/>' +
+        '<circle class="h-a" cx="50" cy="36" r="6"/>'
+    },
+    sesame: {
+      label: 'a bowl of sesame paste',
+      art: '<ellipse class="h-a" cx="22" cy="20" rx="5" ry="2.6" transform="rotate(-20 22 20)"/>' +
+        '<ellipse class="h-a" cx="33" cy="14" rx="5" ry="2.6" transform="rotate(10 33 14)"/>' +
+        '<ellipse class="h-a" cx="43" cy="21" rx="5" ry="2.6" transform="rotate(35 43 21)"/>' +
+        '<ellipse class="h-a" cx="32" cy="33" rx="19" ry="5"/>' +
+        '<path class="h-b" d="M13 33 H51 A19 19 0 0 1 13 33 Z"/>'
+    },
+    flax: {
+      label: 'flax seeds',
+      art: '<ellipse class="h-a" cx="20" cy="22" rx="8" ry="4" transform="rotate(-25 20 22)"/>' +
+        '<ellipse class="h-a" cx="42" cy="19" rx="8" ry="4" transform="rotate(15 42 19)"/>' +
+        '<ellipse class="h-a" cx="31" cy="34" rx="8" ry="4" transform="rotate(-5 31 34)"/>' +
+        '<ellipse class="h-a" cx="46" cy="41" rx="8" ry="4" transform="rotate(40 46 41)"/>' +
+        '<ellipse class="h-a" cx="19" cy="45" rx="8" ry="4" transform="rotate(25 19 45)"/>'
+    },
+    cheese: {
+      label: 'a wedge of cheese',
+      art: '<path class="h-a" d="M8 50 H56 L32 18 Z"/>' +
+        '<circle class="h-b" cx="32" cy="41" r="4"/>' +
+        '<circle class="h-b" cx="22" cy="46" r="2.6"/>' +
+        '<circle class="h-b" cx="42" cy="45" r="3"/>'
+    }
+  };
+
+  function hintSvg(kind) {
+    var h = HINTS[kind];
+    if (!h) return '';
+    return '<svg viewBox="0 0 64 64" role="img" aria-label="' + h.label + '">' + h.art + '</svg>';
+  }
+
   // ---------- recall a whole course ----------
   // The one mode that tests the shape of the menu rather than any single item:
   // you are told the course and how many things are on it, and have to produce
@@ -622,6 +685,9 @@
 
     var body = $('recallBody');
     body.innerHTML = '';
+    body.classList.remove('hints-on');
+
+    var anyHints = false;
 
     sec.items.forEach(function (item, i) {
       var slot = document.createElement('div');
@@ -631,19 +697,39 @@
       var num = document.createElement('div');
       num.className = 'slot-num';
       num.textContent = (i + 1) + '.';
+      slot.appendChild(num);
+
+      if (item.hint) {
+        anyHints = true;
+        var pic = document.createElement('div');
+        pic.className = 'slot-hint';
+        pic.innerHTML = hintSvg(item.hint);
+        slot.appendChild(pic);
+      }
 
       var text = document.createElement('div');
       text.className = 'slot-text';
       text.textContent = '— — —';
-
-      slot.appendChild(num);
       slot.appendChild(text);
+
       body.appendChild(slot);
     });
+
+    // Only the bread carries hints, so the button is absent everywhere else
+    // rather than sitting there doing nothing.
+    $('recallHintRow').classList.toggle('hidden', !anyHints);
+    $('recallHint').textContent = 'Show hints';
 
     body.scrollTop = 0;
     $('recallReveal').disabled = false;
   }
+
+  $('recallHint').addEventListener('click', function () {
+    var body = $('recallBody');
+    var on = body.classList.contains('hints-on');
+    body.classList.toggle('hints-on', !on);
+    $('recallHint').textContent = on ? 'Show hints' : 'Hide hints';
+  });
 
   function revealSlot(i) {
     var sec = recallSecs[recallAt];

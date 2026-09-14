@@ -152,16 +152,17 @@ ok('home offers exactly Food and Beverages', function () {
   if (names.join('/') !== 'Food/Beverages') throw new Error('got ' + names.join('/'));
 });
 
-ok('Food holds one service, Lunch', function () {
+ok('Food holds two services, Lunch and Bread', function () {
   openTop(FOOD);
   var kids = pool.groupChoices.children;
-  if (kids.length !== 1) throw new Error('got ' + kids.length + ' services');
+  if (kids.length !== 2) throw new Error('got ' + kids.length + ' services');
   // Group tiles carry no kicker, so the name is the first child.
-  if (kids[0].children[0].textContent !== 'Lunch') throw new Error('got ' + kids[0].children[0].textContent);
+  var names = kids.map(function (k) { return k.children[0].textContent; }).join('/');
+  if (names !== 'Lunch/Bread') throw new Error('got ' + names);
 });
 
-ok('Food hides "all of it together" while Lunch is alone', function () {
-  if (!pool.groupEverything.classList.contains('hidden')) throw new Error('button was showing');
+ok('Food offers all-of-it-together now there are two services', function () {
+  if (pool.groupEverything.classList.contains('hidden')) throw new Error('button stayed hidden');
 });
 
 function shownModes() {
@@ -226,6 +227,44 @@ ok('Lunch recall covers all five courses, singles included', function () {
   var courses = Object.keys(seen).sort().join(', ');
   var want = 'Appetiser, Canapé, Dessert, From The Bakery, Main Course';
   if (courses !== want) throw new Error('offered ' + courses);
+  if (!pool.recallHintRow.classList.contains('hidden')) throw new Error('hint row showing on Lunch');
+});
+
+ok('Bread offers only the summary and the recall', function () {
+  back('modeScreen'); back('groupScreen');
+  openGroup(1);
+  if (shownModes() !== 'list,recall') throw new Error('showing ' + shownModes());
+});
+
+ok('Bread recall lists exactly the five breads', function () {
+  openMode('recall');
+  if (pool.recallBody.children.length !== 5) throw new Error('got ' + pool.recallBody.children.length + ' slots');
+  if (!pool.recallNextRow.classList.contains('hidden')) throw new Error('next-course row showing for one course');
+  if (pool.recallHintRow.classList.contains('hidden')) throw new Error('hint button hidden');
+});
+
+ok('every bread carries a drawn hint', function () {
+  var n = 0;
+  pool.recallBody.children.forEach(function (slot) {
+    slot.children.forEach(function (c) {
+      if (!c.classList.contains('slot-hint')) return;
+      n++;
+      var svg = c.innerHTML;
+      if (svg.indexOf('<svg') !== 0) throw new Error('hint is not an svg');
+      if (svg.indexOf('</svg>') < 0) throw new Error('svg never closed');
+      if (svg.indexOf('aria-label=""') > -1) throw new Error('hint has an empty label');
+    });
+  });
+  if (n !== 5) throw new Error(n + ' of 5 breads have a hint');
+});
+
+ok('hints stay hidden until asked for', function () {
+  if (pool.recallBody.classList.contains('hints-on')) throw new Error('hints on by default');
+  fire('recallHint');
+  if (!pool.recallBody.classList.contains('hints-on')) throw new Error('Show hints did nothing');
+  if (pool.recallHint.textContent !== 'Hide hints') throw new Error('label did not flip');
+  fire('recallHint');
+  if (pool.recallBody.classList.contains('hints-on')) throw new Error('Hide hints did nothing');
 });
 
 ok('Beverages holds four parts plus all-together', function () {

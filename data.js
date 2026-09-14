@@ -115,6 +115,33 @@ var MENU = [
           ]}
 
         ]
+      },
+
+      // The bread basket. Five items, no descriptions and no courses - there
+      // is nothing to describe and nothing to order them by, so this group
+      // offers the summary and the recall only.
+      //
+      // Each bread carries a `hint`: a picture that decodes to the word you
+      // are trying to dig out. Rosemary is the one that needs explaining - it
+      // is a woman labelled Mary holding a rose, so rose + Mary. The rest are
+      // literal. Hints stay hidden behind a button, so the drill is still a
+      // drill until you ask for help.
+      {
+        id: 'bread',
+        name: 'Bread',
+        sub: 'Five in the basket',
+        modes: ['list', 'recall'],
+        sections: [
+
+          { name: 'Bread', items: [
+            { name: 'Sunflower Seed Ciabatta Roll', hint: 'sunflower' },
+            { name: 'Rosemary Olive Focaccia Roll', hint: 'rosemary' },
+            { name: 'Butter Crusty Sesame', hint: 'sesame' },
+            { name: 'Rustic Flax Seed Loaf', hint: 'flax' },
+            { name: 'Parmesan Cheese Lavosh', hint: 'cheese' }
+          ]}
+
+        ]
       }
 
       // Delectables and Light Dinner go here, in exactly this shape.

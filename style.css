@@ -356,3 +356,32 @@ body {
 .slot-text { flex: 1 1 auto; font-size: 15.5px; line-height: 1.35; color: var(--dim); }
 .slot.shown .slot-text { color: var(--ink); font-weight: 600; }
 .slot.shown { border-color: var(--accent-soft); background: var(--card-2); }
+
+/* ---------- recall hints ---------- */
+/* A picture that decodes to the word you are digging for: a sunflower, a woman
+   labelled Mary holding a rose. Drawn as inline SVG rather than loaded as
+   image files - nothing to host, nothing to fetch on a plane, and they take
+   their colours from the theme like everything else.
+
+   Hidden until asked for, so the drill stays a drill. */
+.slot-hint { display: none; flex: 0 0 auto; }
+#recallBody.hints-on .slot-hint { display: block; }
+
+.slot-hint svg { width: 40px; height: 40px; display: block; }
+.slot-hint .h-a { fill: var(--accent); }
+.slot-hint .h-b { fill: var(--ink); opacity: .5; }
+
+.slot-hint .h-s {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.slot-hint .h-t {
+  fill: var(--ink);
+  font-size: 15px;
+  font-weight: 700;
+  font-family: inherit;
+}
