@@ -17,8 +17,8 @@ function makeEl(id) {
   var el = {
     id: id || '',
     _class: '',
+    _html: '',
     textContent: '',
-    innerHTML: '',
     disabled: false,
     children: [],
     scrollTop: 0,
@@ -39,10 +39,17 @@ function makeEl(id) {
       if (id) { listeners[id] = listeners[id] || {}; listeners[id][ev] = fn; }
       this._fn = fn;
     },
-    querySelector: function () { return makeEl(); },
+    querySelector: function () { return el._sub || makeEl(); },
     querySelectorAll: function () { return []; },
     removeChild: function () {}
   };
+  // The app empties a container with innerHTML = '', and a stub that ignores
+  // that leaves the previous screen's tiles in place - which silently makes
+  // every later "tap the second tile" land on the wrong thing.
+  Object.defineProperty(el, 'innerHTML', {
+    get: function () { return el._html; },
+    set: function (v) { el._html = v; if (v === '') el.children.length = 0; }
+  });
   Object.defineProperty(el, 'className', {
     get: function () { return el._class; },
     set: function (v) {
@@ -57,16 +64,17 @@ function makeEl(id) {
 var pool = {};
 Object.keys(ids).forEach(function (id) { pool[id] = makeEl(id); });
 
-// The five mode buttons carry data-mode and hold a .menu-btn-sub inside.
+// The five mode buttons carry data-mode and hold a .menu-btn-sub inside. The
+// "say" one is also addressed by id as #modeSay, so it must be the SAME object
+// the app hides - otherwise the test cannot see that Food loses it.
 var modeBtns = ['list', 'say', 'what', 'name', 'recall'].map(function (m) {
-  var b = makeEl('mode-' + m);
+  var b = (m === 'say') ? pool.modeSay : makeEl('mode-' + m);
   b.setAttribute('data-mode', m);
   b._sub = makeEl();
-  b.querySelector = function () { return b._sub; };
   return b;
 });
 
-var backBtns = ['homeScreen', 'modeScreen'].map(function (t) {
+var backBtns = ['homeScreen', 'groupScreen', 'modeScreen'].map(function (t) {
   var b = makeEl('back-' + t);
   b.setAttribute('data-back', t);
   return b;
@@ -118,92 +126,164 @@ function fire(id, ev) {
   listeners[id][ev || 'click']();
 }
 
+function back(to) {
+  var b = backBtns.filter(function (x) { return x.getAttribute('data-back') === to; })[0];
+  b._fn();
+}
+
 var checks = [];
 function ok(label, fn) {
   try { fn(); checks.push('  ok   ' + label); }
   catch (e) { checks.push('  FAIL ' + label + ' -> ' + e.message); }
 }
 
+// Walk: home tile -> group tile -> mode button.
+function openTop(i) { pool.homeChoices.children[i]._fn(); }
+function openGroup(i) { pool.groupChoices.children[i]._fn(); }
+function openMode(m) { modeBtns[['list', 'say', 'what', 'name', 'recall'].indexOf(m)]._fn(); }
+
 console.log('ids referenced but not in index.html: ' + (missing.length ? missing.join(', ') : 'none'));
 
-ok('home built five categories', function () {
-  if (pool.homeChoices.children.length !== 5) throw new Error('got ' + pool.homeChoices.children.length);
+var FOOD = 0, DRINKS = 1;
+
+ok('home offers exactly Food and Beverages', function () {
+  var kids = pool.homeChoices.children;
+  if (kids.length !== 2) throw new Error('got ' + kids.length + ' tiles');
+  var names = kids.map(function (k) { return k.children[1].textContent; });
+  if (names.join('/') !== 'Food/Beverages') throw new Error('got ' + names.join('/'));
 });
 
-ok('everything button opens a category', function () { fire('homeEverything'); });
-
-ok('the menu renders', function () {
-  modeBtns[0]._fn();
-  if (!pool.listBody.children.length) throw new Error('listBody empty');
+ok('Food holds one service, Lunch', function () {
+  openTop(FOOD);
+  var kids = pool.groupChoices.children;
+  if (kids.length !== 1) throw new Error('got ' + kids.length + ' services');
+  // Group tiles carry no kicker, so the name is the first child.
+  if (kids[0].children[0].textContent !== 'Lunch') throw new Error('got ' + kids[0].children[0].textContent);
 });
 
-ok('read it to me queues every item', function () {
+ok('Food hides "all of it together" while Lunch is alone', function () {
+  if (!pool.groupEverything.classList.contains('hidden')) throw new Error('button was showing');
+});
+
+ok('Lunch offers only the menu, what-is-it and recall', function () {
+  openGroup(0);
+  var shown = modeBtns
+    .filter(function (b) { return !b.classList.contains('hidden'); })
+    .map(function (b) { return b.getAttribute('data-mode'); });
+  if (shown.join(',') !== 'list,what,recall') throw new Error('showing ' + shown.join(','));
+  if (pool.kickList.textContent !== 'read') throw new Error('list kicker still mentions listen');
+});
+
+ok('Lunch menu renders and stays silent', function () {
   spoken.length = 0;
-  fire('listSpeakAll');
-  if (spoken.length !== 49) throw new Error('queued ' + spoken.length + ', expected 49');
-  if (!spoken.some(function (s) { return s.indexOf('fr-FR') === 0; })) throw new Error('no French voice used');
+  openMode('list');
+  if (!pool.listBody.children.length) throw new Error('listBody empty');
+  if (!pool.listSpeakAll.classList.contains('hidden')) throw new Error('read-aloud button showing on food');
+  // Rows are plain divs on the food side, so tapping one cannot speak.
+  var rows = pool.listBody.children.filter(function (c) { return c.classList.contains('row'); });
+  rows.forEach(function (r) { if (r._fn) r._fn(); });
+  if (spoken.length) throw new Error('food spoke ' + spoken.length + ' times');
 });
 
-ok('say it walks the whole category', function () {
-  modeBtns[1]._fn();
+ok('Lunch has no sounds-like lines left in the data', function () {
   var n = 0;
-  while (pool.sayName.textContent !== 'That is the lot.' && n < 200) { fire('sayGot'); n++; }
-  if (n !== 49) throw new Error('walked ' + n + ' items, expected 49');
+  MENU[0].groups.forEach(function (g) {
+    g.sections.forEach(function (s) {
+      if (s.say) n++;
+      s.items.forEach(function (i) { if (i.say) n++; });
+    });
+  });
+  if (n) throw new Error(n + ' say fields still on the food side');
 });
 
-ok('practise again puts the item back', function () {
-  modeBtns[1]._fn();
-  var first = pool.sayName.textContent;
-  fire('sayAgain');
-  var n = 0;
-  while (pool.sayName.textContent !== first && n < 200) { fire('sayGot'); n++; }
-  if (n === 0 || n >= 200) throw new Error('item did not come back round');
-});
-
-ok('what is it? reveals and grades', function () {
-  modeBtns[2]._fn();
+ok('Lunch drills what-is-it, name shown then described', function () {
+  back('modeScreen');
+  openMode('what');
+  var namePrompt = pool.cardPrompt.textContent;
+  if (!namePrompt) throw new Error('no dish name on the front');
   fire('cardReveal');
   if (pool.cardAnswer.classList.contains('hidden')) throw new Error('answer stayed hidden');
+  if (!pool.cardAnswer.textContent) throw new Error('revealed nothing to describe');
   fire('cardHit');
 });
 
-ok('name it shows the name as the answer', function () {
-  modeBtns[3]._fn();
-  var prompt = pool.cardPrompt.textContent;
-  fire('cardReveal');
-  if (!pool.cardAnswer.children.length) throw new Error('no name element in answer');
-  if (!prompt) throw new Error('empty prompt');
-  fire('cardMiss');
+ok('Lunch recall covers all five courses, singles included', function () {
+  back('modeScreen');
+  openMode('recall');
+  if (!pool.recallBody.children.length) throw new Error('no slots');
+
+  // Walk the whole cycle and collect the course names it offers.
+  var seen = {}, n = 0;
+  while (n < 12) {
+    seen[pool.recallSection.textContent] = true;
+    fire('recallAll');
+    fire('recallNext');
+    n++;
+  }
+  var courses = Object.keys(seen).sort().join(', ');
+  var want = 'Appetiser, Canapé, Dessert, From The Bakery, Main Course';
+  if (courses !== want) throw new Error('offered ' + courses);
 });
 
-ok('recall lists slots and reveals them', function () {
-  modeBtns[4]._fn();
-  if (!pool.recallBody.children.length) throw new Error('no slots');
-  fire('recallAll');
-  fire('recallNext');
-  if (!pool.recallSection.textContent) throw new Error('no section name');
+ok('Beverages holds four parts plus all-together', function () {
+  back('modeScreen'); back('groupScreen'); back('homeScreen');
+  openTop(DRINKS);
+  if (pool.groupChoices.children.length !== 4) throw new Error('got ' + pool.groupChoices.children.length);
+  if (pool.groupEverything.classList.contains('hidden')) throw new Error('all-together hidden on drinks');
+});
+
+ok('wine brings the Say it mode back', function () {
+  openGroup(0);
+  if (pool.modeSay.classList.contains('hidden')) throw new Error('Say it missing on drinks');
+  if (pool.kickList.textContent !== 'read · listen') throw new Error('list kicker lost listen');
+});
+
+ok('wine speaks, and uses the French voice', function () {
+  spoken.length = 0;
+  openMode('list');
+  fire('listSpeakAll');
+  if (spoken.length !== 7) throw new Error('queued ' + spoken.length + ', expected 7');
+  if (!spoken.some(function (s) { return s.indexOf('fr-FR') === 0; })) throw new Error('no French voice used');
+});
+
+ok('Say it walks every drink once', function () {
+  back('modeScreen');
+  openMode('say');
+  var n = 0;
+  while (pool.sayName.textContent !== 'That is the lot.' && n < 100) { fire('sayGot'); n++; }
+  if (n !== 7) throw new Error('walked ' + n + ', expected 7');
+});
+
+ok('all drinks together gathers 38 items', function () {
+  back('modeScreen'); back('groupScreen');
+  fire('groupEverything');
+  var total = Number(pool.modeKnown.innerHTML.replace(/.*\/ /, ''));
+  if (total !== 38) throw new Error('got ' + total);
+});
+
+ok('a mixed course is labelled with where it came from', function () {
+  openMode('recall');
+  var label = pool.recallSection.textContent;
+  if (label.indexOf('·') < 0) throw new Error('unlabelled course: ' + label);
+});
+
+ok('Spirits and Beer disables the description modes', function () {
+  back('modeScreen'); back('groupScreen');
+  openGroup(2);
+  if (!modeBtns[2].disabled) throw new Error('what-is-it stayed enabled');
+  if (!modeBtns[3].disabled) throw new Error('name-it stayed enabled');
 });
 
 ok('progress survives a reload', function () {
   if (!store['menu-practice-v1']) throw new Error('nothing saved');
   var saved = JSON.parse(store['menu-practice-v1']);
-  if (!Object.keys(saved.learned).length) throw new Error('learned map empty');
+  var keys = Object.keys(saved.learned);
+  if (!keys.length) throw new Error('learned map empty');
+  if (!keys.some(function (k) { return k.indexOf('lunch|') === 0; })) throw new Error('no food progress keyed to lunch');
 });
 
-ok('reset clears the category', function () {
+ok('reset clears only the group you are in', function () {
   fire('modeReset');
-});
-
-ok('spirits disables the description modes', function () {
-  // openCategory is internal; reach it the way a tap would - the 4th home tile.
-  pool.homeChoices.children[3]._fn();
-  if (!modeBtns[2].disabled) throw new Error('what-is-it stayed enabled on Spirits');
-  if (!modeBtns[3].disabled) throw new Error('name-it stayed enabled on Spirits');
-});
-
-ok('food re-enables them', function () {
-  pool.homeChoices.children[0]._fn();
-  if (modeBtns[2].disabled) throw new Error('what-is-it stayed disabled on Food');
 });
 
 console.log(checks.join('\n'));

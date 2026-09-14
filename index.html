@@ -8,11 +8,11 @@
 <meta name="apple-mobile-web-app-title" content="Menu">
 <meta name="theme-color" content="#12131a">
 <title>Menu Practice</title>
-<link rel="stylesheet" href="style.css?v=1">
+<link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
 
-<!-- ===== WHICH PART OF THE MENU ===== -->
+<!-- ===== FOOD OR BEVERAGES ===== -->
 <section id="homeScreen" class="screen">
   <div class="menu-head">
     <h1 class="app-title">Menu</h1>
@@ -22,11 +22,24 @@
   <div class="menu-choices" id="homeChoices">
     <!-- built from MENU -->
   </div>
+</section>
+
+<!-- ===== WHICH SERVICE / WHICH PART OF THE DRINKS LIST ===== -->
+<section id="groupScreen" class="screen hidden">
+  <div class="bar">
+    <button class="back" data-back="homeScreen">‹</button>
+    <div class="bar-title" id="groupTitle">Food</div>
+    <div class="score" id="groupKnown"></div>
+  </div>
+
+  <div class="menu-choices" id="groupChoices">
+    <!-- built from the chosen half of MENU -->
+  </div>
 
   <div class="menu-foot">
-    <button class="link-btn" id="homeEverything">
-      <span>Everything, all together</span>
-      <span class="chev" id="homeCount"></span>
+    <button class="link-btn hidden" id="groupEverything">
+      <span>All of it, together</span>
+      <span class="chev" id="groupCount"></span>
     </button>
   </div>
 </section>
@@ -34,18 +47,18 @@
 <!-- ===== HOW TO PRACTISE ===== -->
 <section id="modeScreen" class="screen hidden">
   <div class="bar">
-    <button class="back" data-back="homeScreen">‹</button>
-    <div class="bar-title" id="modeTitle">Food</div>
+    <button class="back" data-back="groupScreen">‹</button>
+    <div class="bar-title" id="modeTitle">Lunch</div>
     <div class="score" id="modeKnown"></div>
   </div>
 
   <div class="menu-choices">
     <button class="menu-btn" data-mode="list">
-      <span class="menu-btn-kicker">read · listen</span>
+      <span class="menu-btn-kicker" id="kickList">read</span>
       <span class="menu-btn-main">The menu</span>
-      <span class="menu-btn-sub">Everything in order, tap any line to hear it</span>
+      <span class="menu-btn-sub" id="subList">Everything in order, as it is printed</span>
     </button>
-    <button class="menu-btn" data-mode="say">
+    <button class="menu-btn" data-mode="say" id="modeSay">
       <span class="menu-btn-kicker">out loud</span>
       <span class="menu-btn-main">Say it</span>
       <span class="menu-btn-sub">One name at a time. Say it, then check yourself</span>
@@ -80,9 +93,9 @@
   <div class="bar">
     <button class="back" data-back="modeScreen">‹</button>
     <div class="bar-title">The menu</div>
-    <button class="mini" id="listSpeakAll">Read it to me</button>
+    <button class="mini hidden" id="listSpeakAll">Read it to me</button>
   </div>
-  <p class="hint" id="listHint">Tap a line to hear it and see the whole description.</p>
+  <p class="hint" id="listHint"></p>
   <div class="scroller" id="listBody"></div>
 </section>
 
@@ -164,7 +177,7 @@
   </div>
 </section>
 
-<script src="data.js?v=1"></script>
-<script src="app.js?v=1"></script>
+<script src="data.js?v=2"></script>
+<script src="app.js?v=2"></script>
 </body>
 </html>
