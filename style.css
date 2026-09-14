@@ -1,0 +1,358 @@
+/* Same skin as the hiragana app, so both feel like the same pair of tools.
+   The one change is the accent: a warmer gold, because the whole app is a
+   cabin menu rather than a writing chart. */
+:root {
+  --bg: #12131a;
+  --card: #1d1f2b;
+  --card-2: #262939;
+  --line: #343849;
+  --ink: #f2f3f7;
+  --dim: #9aa0b5;
+  --accent: #d4a558;
+  --accent-soft: rgba(212, 165, 88, .16);
+  --good: #3fbf7f;
+  --bad: #f0645f;
+  --serif: Georgia, "Times New Roman", serif;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f6f7fb;
+    --card: #ffffff;
+    --card-2: #eef0f7;
+    --line: #d8dbe6;
+    --ink: #1a1c24;
+    --dim: #6b7186;
+    --accent: #9a6f1c;
+    --accent-soft: rgba(154, 111, 28, .11);
+  }
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  -webkit-text-size-adjust: 100%;
+  overscroll-behavior: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+body {
+  height: 100vh;
+  height: 100dvh;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+.screen {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 0 14px 14px;
+  min-height: 0;
+}
+
+.hidden { display: none !important; }
+
+/* ---------- main menu ---------- */
+.menu-head { padding: 30px 0 8px; text-align: center; flex: 0 0 auto; }
+
+.app-title {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 40px;
+  font-weight: 400;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.app-sub { margin: 8px 0 0; font-size: 13px; color: var(--dim); letter-spacing: .06em; }
+
+.menu-choices {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 11px;
+  padding: 10px 0;
+}
+
+.menu-btn {
+  display: block;
+  width: 100%;
+  padding: 18px 20px;
+  text-align: left;
+  font: inherit;
+  color: var(--ink);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  touch-action: manipulation;
+  flex: 0 0 auto;
+}
+
+.menu-btn:disabled { opacity: .4; }
+
+.menu-btn-kicker {
+  display: block;
+  font-size: 12px;
+  color: var(--accent);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 7px;
+}
+
+.menu-btn-main { display: block; font-size: 23px; font-weight: 700; }
+.menu-btn-sub { display: block; font-size: 13.5px; color: var(--dim); margin-top: 4px; line-height: 1.45; }
+
+.menu-foot { flex: 0 0 auto; padding-top: 4px; }
+
+.link-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 16px 18px;
+  font: inherit;
+  font-size: 15px;
+  color: var(--ink);
+  background: var(--card-2);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  touch-action: manipulation;
+}
+
+.chev { color: var(--dim); font-size: 16px; line-height: 1; }
+
+/* ---------- top bar ---------- */
+.bar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0 10px;
+  min-height: 48px;
+}
+
+.back {
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  font-size: 34px;
+  line-height: 1;
+  padding: 0 10px 4px 0;
+  touch-action: manipulation;
+}
+
+.bar-title { font-size: 17px; font-weight: 600; flex: 1 1 auto; }
+.score { font-size: 14px; color: var(--dim); font-variant-numeric: tabular-nums; }
+.score b { color: var(--ink); }
+
+.mini {
+  padding: 7px 12px;
+  font: inherit;
+  font-size: 13px;
+  color: var(--dim);
+  background: var(--card-2);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  touch-action: manipulation;
+  white-space: nowrap;
+}
+
+.hint { flex: 0 0 auto; margin: 0 0 10px; font-size: 13px; color: var(--dim); line-height: 1.5; }
+
+/* ---------- a scrolling body ---------- */
+.scroller {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 8px;
+}
+
+/* ---------- the menu, to read ---------- */
+.sec-head {
+  font-family: var(--serif);
+  font-size: 13px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  padding: 18px 4px 9px;
+}
+
+.sec-head:first-child { padding-top: 2px; }
+.sec-head .sec-say { text-transform: none; letter-spacing: .02em; color: var(--dim); font-family: inherit; }
+
+.row {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: var(--ink);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 9px;
+  touch-action: manipulation;
+}
+
+.row.done { border-color: var(--good); }
+
+.row-name { font-size: 16px; font-weight: 600; line-height: 1.35; }
+.row-say { font-size: 13px; color: var(--accent); margin-top: 5px; letter-spacing: .01em; }
+.row-desc { font-size: 13.5px; color: var(--dim); margin-top: 8px; line-height: 1.5; }
+.row-cut { font-size: 12px; color: var(--dim); opacity: .75; margin-top: 6px; font-style: italic; }
+
+.note {
+  font-size: 12.5px;
+  color: var(--dim);
+  font-style: italic;
+  padding: 6px 4px 14px;
+  line-height: 1.5;
+}
+
+/* ---------- a card in the middle of the screen ---------- */
+.card-area {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--card);
+  border-radius: 20px;
+  margin-bottom: 12px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.card-inner { padding: 24px 20px; text-align: center; width: 100%; }
+
+.card-section {
+  font-size: 12px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 14px;
+}
+
+.card-name {
+  font-family: var(--serif);
+  font-size: clamp(24px, 5.4vh, 34px);
+  line-height: 1.28;
+  font-weight: 400;
+}
+
+.card-say {
+  margin-top: 18px;
+  font-size: 17px;
+  color: var(--accent);
+  line-height: 1.5;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.card-prompt {
+  font-family: var(--serif);
+  font-size: clamp(19px, 3.6vh, 26px);
+  line-height: 1.4;
+  font-weight: 400;
+}
+
+.card-answer {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 15.5px;
+  color: var(--dim);
+  line-height: 1.55;
+}
+
+.card-answer .ans-name {
+  display: block;
+  font-family: var(--serif);
+  font-size: 22px;
+  color: var(--ink);
+  line-height: 1.3;
+  margin-bottom: 8px;
+}
+
+.card-answer .ans-say { display: block; color: var(--accent); font-size: 14px; margin-top: 8px; }
+
+.card-cut { margin-top: 10px; font-size: 12px; font-style: italic; color: var(--dim); opacity: .75; }
+
+.feedback {
+  flex: 0 0 auto;
+  min-height: 22px;
+  margin: 0;
+  padding-bottom: 8px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--dim);
+}
+
+.actions { flex: 0 0 auto; display: flex; gap: 10px; padding-bottom: 10px; }
+.actions:last-child { padding-bottom: 0; }
+
+.btn {
+  flex: 1;
+  padding: 16px 10px;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--card);
+  color: var(--ink);
+  touch-action: manipulation;
+}
+
+.btn:disabled { opacity: .45; }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: #1a1400; }
+.btn-good { background: var(--good); border-color: var(--good); color: #fff; }
+.btn-bad { background: var(--bad); border-color: var(--bad); color: #fff; }
+
+/* ---------- recall ---------- */
+.recall-head { flex: 0 0 auto; text-align: center; padding: 4px 0 16px; }
+.recall-label { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
+
+.recall-section {
+  font-family: var(--serif);
+  font-size: 30px;
+  margin-top: 6px;
+  line-height: 1.2;
+}
+
+.recall-count { font-size: 13px; color: var(--accent); margin-top: 8px; }
+
+.slot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 15px 16px;
+  margin-bottom: 9px;
+  min-height: 54px;
+}
+
+.slot-num {
+  flex: 0 0 auto;
+  width: 24px;
+  font-size: 13px;
+  color: var(--dim);
+  font-variant-numeric: tabular-nums;
+}
+
+.slot-text { flex: 1 1 auto; font-size: 15.5px; line-height: 1.35; color: var(--dim); }
+.slot.shown .slot-text { color: var(--ink); font-weight: 600; }
+.slot.shown { border-color: var(--accent-soft); background: var(--card-2); }

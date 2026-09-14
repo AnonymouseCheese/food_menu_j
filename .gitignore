@@ -1,0 +1,6 @@
+# Nothing to build and nothing to install, so there is little to ignore.
+# Screenshots stay off GitHub - the typed-out text in data.js is what the app
+# needs, and the images are not mine to publish.
+*.jpg
+*.jpeg
+*.png

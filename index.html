@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Menu">
+<meta name="theme-color" content="#12131a">
+<title>Menu Practice</title>
+<link rel="stylesheet" href="style.css?v=1">
+</head>
+<body>
+
+<!-- ===== WHICH PART OF THE MENU ===== -->
+<section id="homeScreen" class="screen">
+  <div class="menu-head">
+    <h1 class="app-title">Menu</h1>
+    <p class="app-sub" id="homeFlight">Lunch and drinks</p>
+  </div>
+
+  <div class="menu-choices" id="homeChoices">
+    <!-- built from MENU -->
+  </div>
+
+  <div class="menu-foot">
+    <button class="link-btn" id="homeEverything">
+      <span>Everything, all together</span>
+      <span class="chev" id="homeCount"></span>
+    </button>
+  </div>
+</section>
+
+<!-- ===== HOW TO PRACTISE ===== -->
+<section id="modeScreen" class="screen hidden">
+  <div class="bar">
+    <button class="back" data-back="homeScreen">‹</button>
+    <div class="bar-title" id="modeTitle">Food</div>
+    <div class="score" id="modeKnown"></div>
+  </div>
+
+  <div class="menu-choices">
+    <button class="menu-btn" data-mode="list">
+      <span class="menu-btn-kicker">read · listen</span>
+      <span class="menu-btn-main">The menu</span>
+      <span class="menu-btn-sub">Everything in order, tap any line to hear it</span>
+    </button>
+    <button class="menu-btn" data-mode="say">
+      <span class="menu-btn-kicker">out loud</span>
+      <span class="menu-btn-main">Say it</span>
+      <span class="menu-btn-sub">One name at a time. Say it, then check yourself</span>
+    </button>
+    <button class="menu-btn" data-mode="what">
+      <span class="menu-btn-kicker">name → dish</span>
+      <span class="menu-btn-main">What is it?</span>
+      <span class="menu-btn-sub">You see the name. Describe it from memory</span>
+    </button>
+    <button class="menu-btn" data-mode="name">
+      <span class="menu-btn-kicker">dish → name</span>
+      <span class="menu-btn-main">Name it</span>
+      <span class="menu-btn-sub">You see the description. Give it its name</span>
+    </button>
+    <button class="menu-btn" data-mode="recall">
+      <span class="menu-btn-kicker">the whole list</span>
+      <span class="menu-btn-main">Recall</span>
+      <span class="menu-btn-sub">Name everything on a course before you look</span>
+    </button>
+  </div>
+
+  <div class="menu-foot">
+    <button class="link-btn" id="modeReset">
+      <span>Reset what I have learned</span>
+      <span class="chev">›</span>
+    </button>
+  </div>
+</section>
+
+<!-- ===== THE MENU, TO READ ===== -->
+<section id="listScreen" class="screen hidden">
+  <div class="bar">
+    <button class="back" data-back="modeScreen">‹</button>
+    <div class="bar-title">The menu</div>
+    <button class="mini" id="listSpeakAll">Read it to me</button>
+  </div>
+  <p class="hint" id="listHint">Tap a line to hear it and see the whole description.</p>
+  <div class="scroller" id="listBody"></div>
+</section>
+
+<!-- ===== SAY IT ===== -->
+<section id="sayScreen" class="screen hidden">
+  <div class="bar">
+    <button class="back" data-back="modeScreen">‹</button>
+    <div class="bar-title">Say it</div>
+    <div class="score" id="sayScore"></div>
+  </div>
+
+  <div class="card-area">
+    <div class="card-inner">
+      <div class="card-section" id="sayWhere"></div>
+      <div class="card-name" id="sayName"></div>
+      <div class="card-say hidden" id="sayGuide"></div>
+    </div>
+  </div>
+
+  <p class="feedback" id="sayFeedback">Say it out loud first.</p>
+
+  <div class="actions">
+    <button class="btn" id="sayShow">Sounds like</button>
+    <button class="btn btn-primary" id="sayHear">Hear it</button>
+  </div>
+  <div class="actions">
+    <button class="btn btn-bad" id="sayAgain">Practise again</button>
+    <button class="btn btn-good" id="sayGot">Got it</button>
+  </div>
+</section>
+
+<!-- ===== WHAT IS IT? / NAME IT ===== -->
+<section id="cardScreen" class="screen hidden">
+  <div class="bar">
+    <button class="back" data-back="modeScreen">‹</button>
+    <div class="bar-title" id="cardTitle">What is it?</div>
+    <div class="score" id="cardScore"></div>
+  </div>
+
+  <div class="card-area">
+    <div class="card-inner">
+      <div class="card-section" id="cardWhere"></div>
+      <div class="card-prompt" id="cardPrompt"></div>
+      <div class="card-answer hidden" id="cardAnswer"></div>
+      <div class="card-cut hidden" id="cardCut">The screenshot cut this description off here.</div>
+    </div>
+  </div>
+
+  <p class="feedback" id="cardFeedback"></p>
+
+  <div class="actions" id="cardRevealRow">
+    <button class="btn btn-primary" id="cardReveal">Show me</button>
+  </div>
+  <div class="actions hidden" id="cardGradeRow">
+    <button class="btn btn-bad" id="cardMiss">Not quite</button>
+    <button class="btn btn-good" id="cardHit">Got it</button>
+  </div>
+</section>
+
+<!-- ===== RECALL A WHOLE COURSE ===== -->
+<section id="recallScreen" class="screen hidden">
+  <div class="bar">
+    <button class="back" data-back="modeScreen">‹</button>
+    <div class="bar-title">Recall</div>
+    <button class="mini" id="recallNext">Next course</button>
+  </div>
+
+  <div class="recall-head">
+    <div class="recall-label">Name everything on</div>
+    <div class="recall-section" id="recallSection"></div>
+    <div class="recall-count" id="recallCount"></div>
+  </div>
+
+  <div class="scroller" id="recallBody"></div>
+
+  <div class="actions">
+    <button class="btn btn-primary" id="recallReveal">Reveal one</button>
+    <button class="btn" id="recallAll">Reveal all</button>
+  </div>
+</section>
+
+<script src="data.js?v=1"></script>
+<script src="app.js?v=1"></script>
+</body>
+</html>
