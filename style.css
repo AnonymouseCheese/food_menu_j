@@ -399,3 +399,15 @@ body {
   stroke-width: 6;
   stroke-linecap: round;
 }
+
+/* A hint can be a word instead of a drawing - the panel's countries. Sized to
+   sit in the same column an icon would, so a mixed list would still line up. */
+.slot-hint .h-word {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: .01em;
+  line-height: 1.3;
+  white-space: nowrap;
+}

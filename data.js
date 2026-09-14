@@ -413,13 +413,16 @@ var MENU = [
         sub: 'Listed alphabetically, as the page has them',
         sections: [
 
+          // `hintText` is a word rather than a drawing - the country is the
+          // nudge, so Show hints turns the recall from six names out of
+          // nowhere into six countries you match names to.
           { name: 'The panel', items: [
-            { name: 'Monica Galetti',   desc: 'London, United Kingdom' },
-            { name: 'Nandu Jubany',     desc: 'Barcelona, Spain' },
-            { name: 'Sanjeev Kapoor',   desc: 'Mumbai, India' },
-            { name: 'Sid Sahrawat',     desc: 'Auckland, New Zealand' },
-            { name: 'Yoshihiro Murata', desc: 'Kyoto, Japan' },
-            { name: 'Zhu Jun',          desc: 'Shanghai, China' }
+            { name: 'Monica Galetti',   desc: 'London, United Kingdom',   hintText: 'United Kingdom' },
+            { name: 'Nandu Jubany',     desc: 'Barcelona, Spain',         hintText: 'Spain' },
+            { name: 'Sanjeev Kapoor',   desc: 'Mumbai, India',            hintText: 'India' },
+            { name: 'Sid Sahrawat',     desc: 'Auckland, New Zealand',    hintText: 'New Zealand' },
+            { name: 'Yoshihiro Murata', desc: 'Kyoto, Japan',             hintText: 'Japan' },
+            { name: 'Zhu Jun',          desc: 'Shanghai, China',          hintText: 'China' }
           ]}
 
         ]

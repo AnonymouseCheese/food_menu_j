@@ -320,10 +320,23 @@ ok('Experts offers the summary and the recall only', function () {
   if (shownModes() !== 'list,recall') throw new Error('showing ' + shownModes());
 });
 
-ok('Experts recalls six names, with no hints', function () {
+ok('Experts recalls six names, hinted by country', function () {
   openMode('recall');
   if (pool.recallBody.children.length !== 6) throw new Error('got ' + pool.recallBody.children.length + ' slots');
-  if (!pool.recallHintRow.classList.contains('hidden')) throw new Error('hint row showing on the panel');
+  if (pool.recallHintRow.classList.contains('hidden')) throw new Error('hint button hidden on the panel');
+
+  var words = [];
+  pool.recallBody.children.forEach(function (slot) {
+    slot.children.forEach(function (c) {
+      if (!c.classList.contains('slot-hint')) return;
+      if (c.innerHTML.indexOf('<svg') === 0) throw new Error('a chef was given a drawing');
+      words.push(c.children[0].textContent);
+    });
+  });
+  if (words.length !== 6) throw new Error(words.length + ' of 6 chefs have a country');
+  if (words.sort().join(',') !== 'China,India,Japan,New Zealand,Spain,United Kingdom') {
+    throw new Error('got ' + words.sort().join(','));
+  }
   fire('recallAll');
 });
 

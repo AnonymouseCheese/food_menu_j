@@ -720,12 +720,22 @@
       num.textContent = (i + 1) + '.';
       slot.appendChild(num);
 
-      if (item.hint) {
+      // A hint is either a drawing or a word. The bread wants pictures, since
+      // the whole trick there is the rebus; the panel wants the country, which
+      // is a word and would be silly to draw.
+      if (item.hint || item.hintText) {
         anyHints = true;
-        var pic = document.createElement('div');
-        pic.className = 'slot-hint';
-        pic.innerHTML = hintSvg(item.hint);
-        slot.appendChild(pic);
+        var cue = document.createElement('div');
+        cue.className = 'slot-hint';
+        if (item.hintText) {
+          var w = document.createElement('span');
+          w.className = 'h-word';
+          w.textContent = item.hintText;
+          cue.appendChild(w);
+        } else {
+          cue.innerHTML = hintSvg(item.hint);
+        }
+        slot.appendChild(cue);
       }
 
       var text = document.createElement('div');
