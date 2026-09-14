@@ -685,7 +685,9 @@
 
     $('recallSection').textContent = (sec.from ? sec.from + ' · ' : '') + sec.name;
     $('recallCount').textContent = sec.items.length === 1 ? 'one item' : sec.items.length + ' items';
-    $('recallNext').classList.toggle('hidden', recallSecs.length < 2);
+    // Hide the whole row, not just the button - an empty .actions row would
+    // still take up its padding above the reveal buttons.
+    $('recallNextRow').classList.toggle('hidden', recallSecs.length < 2);
 
     var body = $('recallBody');
     body.innerHTML = '';
