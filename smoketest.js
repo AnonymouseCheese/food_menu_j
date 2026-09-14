@@ -73,11 +73,15 @@ var modeBtns = MODES.map(function (m) {
   return b;
 });
 
-var backBtns = ['homeScreen', 'groupScreen', 'modeScreen'].map(function (t) {
-  var b = makeEl('back-' + t);
-  b.setAttribute('data-back', t);
-  return b;
-});
+var backs = {
+  toHome: makeEl('back-home'),   // sits on the service chooser
+  toGroup: pool.modeBack,        // sits on the mode menu - target can flip to home
+  toMode: makeEl('back-mode')    // sits on every inner screen
+};
+backs.toHome.setAttribute('data-back', 'homeScreen');
+backs.toGroup.setAttribute('data-back', 'groupScreen');
+backs.toMode.setAttribute('data-back', 'modeScreen');
+var backBtns = [backs.toHome, backs.toGroup, backs.toMode];
 
 global.document = {
   getElementById: function (id) {
@@ -125,10 +129,7 @@ function fire(id, ev) {
   listeners[id][ev || 'click']();
 }
 
-function back(to) {
-  var b = backBtns.filter(function (x) { return x.getAttribute('data-back') === to; })[0];
-  b._fn();
-}
+function back(which) { backs[which]._fn(); }
 
 var checks = [];
 function ok(label, fn) {
@@ -143,13 +144,13 @@ function openMode(m) { modeBtns[MODES.indexOf(m)]._fn(); }
 
 console.log('ids referenced but not in index.html: ' + (missing.length ? missing.join(', ') : 'none'));
 
-var FOOD = 0, DRINKS = 1;
+var FOOD = 0, DRINKS = 1, EXPERTS = 2;
 
-ok('home offers exactly Food and Beverages', function () {
+ok('home offers Food, Beverages and Experts', function () {
   var kids = pool.homeChoices.children;
-  if (kids.length !== 2) throw new Error('got ' + kids.length + ' tiles');
+  if (kids.length !== 3) throw new Error('got ' + kids.length + ' tiles');
   var names = kids.map(function (k) { return k.children[1].textContent; });
-  if (names.join('/') !== 'Food/Beverages') throw new Error('got ' + names.join('/'));
+  if (names.join('/') !== 'Food/Beverages/Experts') throw new Error('got ' + names.join('/'));
 });
 
 ok('Food holds two services, Lunch and Bread', function () {
@@ -201,7 +202,7 @@ ok('Lunch has no sounds-like lines left in the data', function () {
 });
 
 ok('Lunch drills what-is-it, name shown then described', function () {
-  back('modeScreen');
+  back('toMode');
   openMode('what');
   var namePrompt = pool.cardPrompt.textContent;
   if (!namePrompt) throw new Error('no dish name on the front');
@@ -212,7 +213,7 @@ ok('Lunch drills what-is-it, name shown then described', function () {
 });
 
 ok('Lunch recall covers all five courses, singles included', function () {
-  back('modeScreen');
+  back('toMode');
   openMode('recall');
   if (!pool.recallBody.children.length) throw new Error('no slots');
 
@@ -231,7 +232,7 @@ ok('Lunch recall covers all five courses, singles included', function () {
 });
 
 ok('Bread offers only the summary and the recall', function () {
-  back('modeScreen'); back('groupScreen');
+  back('toMode'); back('toGroup');
   openGroup(1);
   if (shownModes() !== 'list,recall') throw new Error('showing ' + shownModes());
 });
@@ -268,7 +269,7 @@ ok('hints stay hidden until asked for', function () {
 });
 
 ok('Beverages holds four parts plus all-together', function () {
-  back('modeScreen'); back('groupScreen'); back('homeScreen');
+  back('toMode'); back('toGroup'); back('toHome');
   openTop(DRINKS);
   if (pool.groupChoices.children.length !== 4) throw new Error('got ' + pool.groupChoices.children.length);
   if (pool.groupEverything.classList.contains('hidden')) throw new Error('all-together hidden on drinks');
@@ -289,7 +290,7 @@ ok('wine speaks, and uses the French voice', function () {
 });
 
 ok('all drinks together gathers 38 items', function () {
-  back('modeScreen'); back('groupScreen');
+  back('toMode'); back('toGroup');
   fire('groupEverything');
   var total = Number(pool.modeKnown.innerHTML.replace(/.*\/ /, ''));
   if (total !== 38) throw new Error('got ' + total);
@@ -302,10 +303,38 @@ ok('a mixed course is labelled with where it came from', function () {
 });
 
 ok('Spirits and Beer disables the description modes', function () {
-  back('modeScreen'); back('groupScreen');
+  back('toMode'); back('toGroup');
   openGroup(2);
   if (!modeBtns[MODES.indexOf('what')].disabled) throw new Error('what-is-it stayed enabled');
   if (!modeBtns[MODES.indexOf('name')].disabled) throw new Error('name-it stayed enabled');
+});
+
+ok('Experts skips the service chooser it does not need', function () {
+  back('toGroup'); back('toHome');
+  openTop(EXPERTS);
+  if (pool.modeTitle.textContent !== 'The panel') throw new Error('landed on ' + pool.modeTitle.textContent);
+  if (pool.modeBack.getAttribute('data-back') !== 'homeScreen') throw new Error('back still aims at the chooser');
+});
+
+ok('Experts offers the summary and the recall only', function () {
+  if (shownModes() !== 'list,recall') throw new Error('showing ' + shownModes());
+});
+
+ok('Experts recalls six names, with no hints', function () {
+  openMode('recall');
+  if (pool.recallBody.children.length !== 6) throw new Error('got ' + pool.recallBody.children.length + ' slots');
+  if (!pool.recallHintRow.classList.contains('hidden')) throw new Error('hint row showing on the panel');
+  fire('recallAll');
+});
+
+ok('the panel summary pairs every name with a city', function () {
+  back('toMode');
+  openMode('list');
+  var rows = pool.listBody.children.filter(function (c) { return c.classList.contains('row'); });
+  if (rows.length !== 6) throw new Error('got ' + rows.length + ' rows');
+  rows.forEach(function (r) {
+    if (r.children.length < 2) throw new Error('a chef has no city under the name');
+  });
 });
 
 ok('progress survives a reload', function () {

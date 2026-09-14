@@ -301,6 +301,16 @@
 
   function openTop(top) {
     current.top = top;
+
+    // A half with a single service has nothing to choose between, so the
+    // chooser is skipped and the back button on the next screen is pointed at
+    // home instead. Experts is the only one for now; Food was like this until
+    // Bread arrived, and will be again if a half is ever added with one group.
+    if (top.groups.length === 1) {
+      openGroup(top.groups[0]);
+      return;
+    }
+
     paintGroups();
     show('groupScreen');
   }
@@ -349,6 +359,8 @@
 
   function paintModeMenu() {
     $('modeTitle').textContent = current.group.name;
+    $('modeBack').setAttribute('data-back',
+      current.top.groups.length === 1 ? 'homeScreen' : 'groupScreen');
     var done = learnedCount(current.items);
     $('modeKnown').innerHTML = '<b>' + done + '</b> / ' + current.items.length;
 
@@ -624,12 +636,16 @@
         '<circle class="h-a" cx="50" cy="36" r="6"/>'
     },
     sesame: {
-      label: 'a bowl of sesame paste',
-      art: '<ellipse class="h-a" cx="22" cy="20" rx="5" ry="2.6" transform="rotate(-20 22 20)"/>' +
-        '<ellipse class="h-a" cx="33" cy="14" rx="5" ry="2.6" transform="rotate(10 33 14)"/>' +
-        '<ellipse class="h-a" cx="43" cy="21" rx="5" ry="2.6" transform="rotate(35 43 21)"/>' +
-        '<ellipse class="h-a" cx="32" cy="33" rx="19" ry="5"/>' +
-        '<path class="h-b" d="M13 33 H51 A19 19 0 0 1 13 33 Z"/>'
+      label: 'a bowl of black sesame paste',
+      // The bowl is drawn first and in the grey, so the black paste has
+      // something light to sit on. Painted straight onto the card it would
+      // vanish the moment the phone went dark.
+      art: '<ellipse class="h-a" cx="21" cy="18" rx="5" ry="2.6" transform="rotate(-20 21 18)"/>' +
+        '<ellipse class="h-a" cx="32" cy="13" rx="5" ry="2.6" transform="rotate(10 32 13)"/>' +
+        '<ellipse class="h-a" cx="43" cy="19" rx="5" ry="2.6" transform="rotate(35 43 19)"/>' +
+        '<path class="h-b" d="M11 32 H53 A21 21 0 0 1 11 32 Z"/>' +
+        '<ellipse class="h-b" cx="32" cy="32" rx="21" ry="6"/>' +
+        '<ellipse class="h-k" cx="32" cy="32" rx="16" ry="4.2"/>'
     },
     flax: {
       label: 'flax seeds',
@@ -640,11 +656,16 @@
         '<ellipse class="h-a" cx="19" cy="45" rx="8" ry="4" transform="rotate(25 19 45)"/>'
     },
     cheese: {
-      label: 'a wedge of cheese',
-      art: '<path class="h-a" d="M8 50 H56 L32 18 Z"/>' +
-        '<circle class="h-b" cx="32" cy="41" r="4"/>' +
-        '<circle class="h-b" cx="22" cy="46" r="2.6"/>' +
-        '<circle class="h-b" cx="42" cy="45" r="3"/>'
+      label: 'a wedge of hard cheese with its rind',
+      // A wedge cut from a wheel: straight sides to the point, the curved
+      // outer rind at the back. The holes it had before were Emmental's, not
+      // a parmesan's - a hard cheese has none, so they are gone and the rind
+      // and the crystalline flecks do the identifying instead.
+      art: '<path class="h-a" d="M8 40 L46 18 Q60 36 46 54 Z"/>' +
+        '<path class="h-rind" d="M46 18 Q60 36 46 54"/>' +
+        '<circle class="h-b" cx="29" cy="36" r="2.2"/>' +
+        '<circle class="h-b" cx="38" cy="30" r="1.7"/>' +
+        '<circle class="h-b" cx="37" cy="43" r="2"/>'
     }
   };
 

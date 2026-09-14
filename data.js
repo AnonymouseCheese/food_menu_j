@@ -393,8 +393,41 @@ var MENU = [
       }
 
     ]
+  },
+
+  // The culinary panel. Six people, a name and a city each - no photos, so the
+  // drill is the summary and the recall. The city is the useful second half:
+  // it is what makes six names into six people you can tell apart.
+  {
+    id: 'experts',
+    name: 'Experts',
+    sub: 'Six names, six cities',
+    taste: 'Galetti · Murata · Zhu Jun',
+    speech: false,
+    modes: ['list', 'recall'],
+    groups: [
+
+      {
+        id: 'panel',
+        name: 'The panel',
+        sub: 'Listed alphabetically, as the page has them',
+        sections: [
+
+          { name: 'The panel', items: [
+            { name: 'Monica Galetti',   desc: 'London, United Kingdom' },
+            { name: 'Nandu Jubany',     desc: 'Barcelona, Spain' },
+            { name: 'Sanjeev Kapoor',   desc: 'Mumbai, India' },
+            { name: 'Sid Sahrawat',     desc: 'Auckland, New Zealand' },
+            { name: 'Yoshihiro Murata', desc: 'Kyoto, Japan' },
+            { name: 'Zhu Jun',          desc: 'Shanghai, China' }
+          ]}
+
+        ]
+      }
+
+    ]
   }
 
 ];
 
-var MENU_FLIGHT = 'Lunch and drinks';
+var MENU_FLIGHT = 'Lunch, drinks and the panel';

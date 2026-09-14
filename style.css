@@ -385,3 +385,17 @@ body {
   font-weight: 700;
   font-family: inherit;
 }
+
+/* Black sesame paste. Fixed near-black rather than a theme colour, because it
+   is meant to read as black - it sits on the grey bowl, so it keeps its
+   contrast whichever way the theme goes. */
+.slot-hint .h-k { fill: #0e0f14; }
+
+/* The rind on the cheese wedge. */
+.slot-hint .h-rind {
+  fill: none;
+  stroke: var(--ink);
+  opacity: .45;
+  stroke-width: 6;
+  stroke-linecap: round;
+}
