@@ -625,39 +625,44 @@
         '<path class="h-s" d="M32 38 V57"/>'
     },
     rosemary: {
-      label: 'a hand labelled Mary, holding a rose',
-      // Rose + Mary. The whole figure was dropped: at this size a head, body
-      // and arm collapsed into a smudge, and the rose read as a lollipop. A
-      // hand is enough to say "holding", and it leaves room for the rose to
-      // be drawn as an actual rose.
+      label: 'a stick figure named Mary holding a rose',
+      // Rose + Mary. Third attempt, and the lesson from the first two is that
+      // filled shapes turn to mush at this size while bold lines survive. So:
+      // a stick figure, drawn in strokes thick enough to read at 46 pixels,
+      // arm raised with the flower held up and away from the body where
+      // nothing overlaps it.
       //
-      // The bud is a spiral rather than a ring of petals, deliberately - a
-      // petalled flower here would be mistaken for the sunflower two rows up.
-      //
-      // Order matters: the stem is laid down first so the hand closing over
-      // it reads as a grip rather than as something floating alongside.
-      art: '<text class="h-t" x="1" y="13">Mary</text>' +
-        '<path class="h-s" d="M19 17 Q24 26 26 34"/>' +
-        '<path class="h-s" d="M26 35 l-4.5 -3.5 M26 35 l4 -3.5"/>' +
-        '<path class="h-s" style="stroke-width:3" d="M43 22 V60"/>' +
-        '<ellipse class="h-a" cx="52" cy="34" rx="7.5" ry="3.6" transform="rotate(-22 52 34)"/>' +
-        '<circle class="h-a" cx="43" cy="15" r="10"/>' +
-        '<path class="h-cut" d="M43 7 a8 8 0 1 1 -8 8 a5.5 5.5 0 1 1 5.5 -5.5 a3 3 0 1 1 -3 3"/>' +
-        '<rect class="h-a" x="23" y="35" width="12" height="8" rx="4" transform="rotate(-22 29 39)"/>' +
-        '<rect class="h-a" x="24" y="40" width="26" height="19" rx="8"/>' +
-        '<path class="h-cut" d="M30 46 h15 M30 52.5 h15"/>'
+      // The name is a caption under the figure rather than an arrow pointing
+      // at it. An arrow at this scale is six pixels of clutter competing with
+      // the thing it is pointing at, and a word sitting under a figure already
+      // reads as naming it.
+      art: '<circle class="h-a" cx="25" cy="11" r="6.5"/>' +
+        '<path class="h-s" style="stroke-width:3.5" d="M25 18 V35"/>' +
+        '<path class="h-s" style="stroke-width:3.5" d="M25 35 L18 49 M25 35 L32 49"/>' +
+        '<path class="h-s" style="stroke-width:3.5" d="M25 23 L15 31"/>' +
+        '<path class="h-s" style="stroke-width:3.5" d="M25 23 L40 18"/>' +
+        '<path class="h-s" style="stroke-width:2.5" d="M40 18 L44 12"/>' +
+        '<ellipse class="h-a" cx="47" cy="15" rx="4" ry="2" transform="rotate(-20 47 15)"/>' +
+        '<circle class="h-a" cx="44" cy="4.6" r="3.3"/>' +
+        '<circle class="h-a" cx="47.4" cy="8" r="3.3"/>' +
+        '<circle class="h-a" cx="40.6" cy="8" r="3.3"/>' +
+        '<circle class="h-a" cx="44" cy="11.4" r="3.3"/>' +
+        '<circle class="h-b" cx="44" cy="8" r="2"/>' +
+        '<text class="h-t" x="26" y="62" text-anchor="middle" style="font-size:12px">Mary</text>'
     },
     sesame: {
       label: 'a bowl of black sesame paste',
-      // The bowl is drawn first and in the grey, so the black paste has
-      // something light to sit on. Painted straight onto the card it would
-      // vanish the moment the phone went dark.
-      art: '<ellipse class="h-a" cx="21" cy="18" rx="5" ry="2.6" transform="rotate(-20 21 18)"/>' +
-        '<ellipse class="h-a" cx="32" cy="13" rx="5" ry="2.6" transform="rotate(10 32 13)"/>' +
-        '<ellipse class="h-a" cx="43" cy="19" rx="5" ry="2.6" transform="rotate(35 43 19)"/>' +
-        '<path class="h-b" d="M11 32 H53 A21 21 0 0 1 11 32 Z"/>' +
-        '<ellipse class="h-b" cx="32" cy="32" rx="21" ry="6"/>' +
-        '<ellipse class="h-k" cx="32" cy="32" rx="16" ry="4.2"/>'
+      // Just the bowl. The loose seeds above it were the one part that had to
+      // be a colour, since black would have vanished against the card, and an
+      // orange seed next to black paste only raised the question of why they
+      // did not match.
+      //
+      // The bowl is drawn first and in the grey so the black paste has
+      // something light to sit on - straight onto the card it would disappear
+      // the moment the phone went dark.
+      art: '<path class="h-b" d="M8 24 H56 A24 24 0 0 1 8 24 Z"/>' +
+        '<ellipse class="h-b" cx="32" cy="24" rx="24" ry="7"/>' +
+        '<ellipse class="h-k" cx="32" cy="24" rx="18" ry="5"/>'
     },
     flax: {
       label: 'flax seeds',
