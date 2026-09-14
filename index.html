@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-title" content="Menu">
 <meta name="theme-color" content="#12131a">
 <title>Menu Practice</title>
-<link rel="stylesheet" href="style.css?v=3">
+<link rel="stylesheet" href="style.css?v=4">
 </head>
 <body>
 
@@ -58,11 +58,6 @@
       <span class="menu-btn-main">The menu</span>
       <span class="menu-btn-sub" id="subList">Everything in order, as it is printed</span>
     </button>
-    <button class="menu-btn" data-mode="say" id="modeSay">
-      <span class="menu-btn-kicker">out loud</span>
-      <span class="menu-btn-main">Say it</span>
-      <span class="menu-btn-sub">One name at a time. Say it, then check yourself</span>
-    </button>
     <button class="menu-btn" data-mode="what">
       <span class="menu-btn-kicker">name → dish</span>
       <span class="menu-btn-main">What is it?</span>
@@ -97,34 +92,6 @@
   </div>
   <p class="hint" id="listHint"></p>
   <div class="scroller" id="listBody"></div>
-</section>
-
-<!-- ===== SAY IT ===== -->
-<section id="sayScreen" class="screen hidden">
-  <div class="bar">
-    <button class="back" data-back="modeScreen">‹</button>
-    <div class="bar-title">Say it</div>
-    <div class="score" id="sayScore"></div>
-  </div>
-
-  <div class="card-area">
-    <div class="card-inner">
-      <div class="card-section" id="sayWhere"></div>
-      <div class="card-name" id="sayName"></div>
-      <div class="card-say hidden" id="sayGuide"></div>
-    </div>
-  </div>
-
-  <p class="feedback" id="sayFeedback">Say it out loud first.</p>
-
-  <div class="actions">
-    <button class="btn" id="sayShow">Sounds like</button>
-    <button class="btn btn-primary" id="sayHear">Hear it</button>
-  </div>
-  <div class="actions">
-    <button class="btn btn-bad" id="sayAgain">Practise again</button>
-    <button class="btn btn-good" id="sayGot">Got it</button>
-  </div>
 </section>
 
 <!-- ===== WHAT IS IT? / NAME IT ===== -->
@@ -179,7 +146,7 @@
   </div>
 </section>
 
-<script src="data.js?v=3"></script>
-<script src="app.js?v=3"></script>
+<script src="data.js?v=4"></script>
+<script src="app.js?v=4"></script>
 </body>
 </html>

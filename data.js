@@ -10,9 +10,9 @@
 //   items     the dishes and drinks
 //
 // `speech: false` on a half switches off every pronunciation feature beneath
-// it - the Say it mode, the listen buttons, and the written "sounds like"
-// lines. Food is a memory job: which items are on, and what each one is. Only
-// the drinks have to be said out loud.
+// it - the listen buttons and the written "sounds like" lines. Food is a
+// memory job: which items are on, and what each one is. Only the drinks have
+// to be said out loud, and there only as a reference while you read the list.
 //
 // An item carries:
 //
@@ -37,8 +37,8 @@ var MENU = [
     taste: 'Satay · Biryani · Chendol',
     speech: false,
     // Food is a shorter job than drinks. You read the menu, you describe a dish
-    // when asked for it by name, and you can produce a whole course. Saying the
-    // names and working backwards from a description are drinks problems.
+    // when a passenger asks for it by name, and you can produce a whole course
+    // on request. Working backwards from a description is a drinks problem.
     modes: ['list', 'what', 'recall'],
     groups: [
 

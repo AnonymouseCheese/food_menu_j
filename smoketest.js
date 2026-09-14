@@ -64,11 +64,10 @@ function makeEl(id) {
 var pool = {};
 Object.keys(ids).forEach(function (id) { pool[id] = makeEl(id); });
 
-// The five mode buttons carry data-mode and hold a .menu-btn-sub inside. The
-// "say" one is also addressed by id as #modeSay, so it must be the SAME object
-// the app hides - otherwise the test cannot see that Food loses it.
-var modeBtns = ['list', 'say', 'what', 'name', 'recall'].map(function (m) {
-  var b = (m === 'say') ? pool.modeSay : makeEl('mode-' + m);
+// The mode buttons carry data-mode and hold a .menu-btn-sub inside.
+var MODES = ['list', 'what', 'name', 'recall'];
+var modeBtns = MODES.map(function (m) {
+  var b = makeEl('mode-' + m);
   b.setAttribute('data-mode', m);
   b._sub = makeEl();
   return b;
@@ -140,7 +139,7 @@ function ok(label, fn) {
 // Walk: home tile -> group tile -> mode button.
 function openTop(i) { pool.homeChoices.children[i]._fn(); }
 function openGroup(i) { pool.groupChoices.children[i]._fn(); }
-function openMode(m) { modeBtns[['list', 'say', 'what', 'name', 'recall'].indexOf(m)]._fn(); }
+function openMode(m) { modeBtns[MODES.indexOf(m)]._fn(); }
 
 console.log('ids referenced but not in index.html: ' + (missing.length ? missing.join(', ') : 'none'));
 
@@ -165,12 +164,16 @@ ok('Food hides "all of it together" while Lunch is alone', function () {
   if (!pool.groupEverything.classList.contains('hidden')) throw new Error('button was showing');
 });
 
+function shownModes() {
+  return modeBtns
+    .filter(function (b) { return !b.classList.contains('hidden'); })
+    .map(function (b) { return b.getAttribute('data-mode'); })
+    .join(',');
+}
+
 ok('Lunch offers only the menu, what-is-it and recall', function () {
   openGroup(0);
-  var shown = modeBtns
-    .filter(function (b) { return !b.classList.contains('hidden'); })
-    .map(function (b) { return b.getAttribute('data-mode'); });
-  if (shown.join(',') !== 'list,what,recall') throw new Error('showing ' + shown.join(','));
+  if (shownModes() !== 'list,what,recall') throw new Error('showing ' + shownModes());
   if (pool.kickList.textContent !== 'read') throw new Error('list kicker still mentions listen');
 });
 
@@ -232,9 +235,9 @@ ok('Beverages holds four parts plus all-together', function () {
   if (pool.groupEverything.classList.contains('hidden')) throw new Error('all-together hidden on drinks');
 });
 
-ok('wine brings the Say it mode back', function () {
+ok('wine offers four drills, none of them Say it', function () {
   openGroup(0);
-  if (pool.modeSay.classList.contains('hidden')) throw new Error('Say it missing on drinks');
+  if (shownModes() !== 'list,what,name,recall') throw new Error('showing ' + shownModes());
   if (pool.kickList.textContent !== 'read · listen') throw new Error('list kicker lost listen');
 });
 
@@ -244,14 +247,6 @@ ok('wine speaks, and uses the French voice', function () {
   fire('listSpeakAll');
   if (spoken.length !== 7) throw new Error('queued ' + spoken.length + ', expected 7');
   if (!spoken.some(function (s) { return s.indexOf('fr-FR') === 0; })) throw new Error('no French voice used');
-});
-
-ok('Say it walks every drink once', function () {
-  back('modeScreen');
-  openMode('say');
-  var n = 0;
-  while (pool.sayName.textContent !== 'That is the lot.' && n < 100) { fire('sayGot'); n++; }
-  if (n !== 7) throw new Error('walked ' + n + ', expected 7');
 });
 
 ok('all drinks together gathers 38 items', function () {
@@ -270,8 +265,8 @@ ok('a mixed course is labelled with where it came from', function () {
 ok('Spirits and Beer disables the description modes', function () {
   back('modeScreen'); back('groupScreen');
   openGroup(2);
-  if (!modeBtns[2].disabled) throw new Error('what-is-it stayed enabled');
-  if (!modeBtns[3].disabled) throw new Error('name-it stayed enabled');
+  if (!modeBtns[MODES.indexOf('what')].disabled) throw new Error('what-is-it stayed enabled');
+  if (!modeBtns[MODES.indexOf('name')].disabled) throw new Error('name-it stayed enabled');
 });
 
 ok('progress survives a reload', function () {

@@ -2,10 +2,10 @@
  *
  * Three levels: Food or Beverages, then a service within it, then how you want
  * to practise. Food and drinks are different jobs and get different tools -
- * the drinks have to be said out loud to a passenger, the food only has to be
- * remembered. `speech: false` on the Food half strips out the Say it mode, the
+ * a drink has to leave your mouth correctly in front of a passenger, a dish
+ * only has to be remembered. `speech: false` on the Food half strips out the
  * listen buttons and the written "sounds like" lines, so the food side stays a
- * plain memory drill.
+ * plain memory drill, and `modes` lets a half choose which drills it offers.
  *
  * No build step and no libraries - open index.html and it runs. */
 
@@ -123,7 +123,7 @@
   }
 
   // ---------- screens ----------
-  var SCREENS = ['homeScreen', 'groupScreen', 'modeScreen', 'listScreen', 'sayScreen', 'cardScreen', 'recallScreen'];
+  var SCREENS = ['homeScreen', 'groupScreen', 'modeScreen', 'listScreen', 'cardScreen', 'recallScreen'];
 
   function show(id) {
     SCREENS.forEach(function (s) { $(s).classList.toggle('hidden', s !== id); });
@@ -368,7 +368,6 @@
       var mode = btn.getAttribute('data-mode');
 
       var offered = allowed ? allowed.indexOf(mode) > -1 : true;
-      if (mode === 'say' && !voice) offered = false;
       btn.classList.toggle('hidden', !offered);
       if (!offered) return;
 
@@ -393,7 +392,6 @@
     btn.addEventListener('click', function () {
       var mode = btn.getAttribute('data-mode');
       if (mode === 'list') startList();
-      else if (mode === 'say') startSay();
       else if (mode === 'recall') startRecall();
       else startCards(mode);
     });
@@ -495,78 +493,11 @@
 
   $('listSpeakAll').addEventListener('click', readAll);
 
-  // ---------- say it ----------
-  // A queue rather than a random pick each time, so one pass covers everything
-  // once. "Practise again" puts the item back at the end instead of dropping it.
-  var sayQ = [];
-  var sayNow = null;
-
-  function startSay() {
-    sayQ = shuffle(current.items);
-    nextSay();
-    show('sayScreen');
-  }
-
-  function nextSay() {
-    if (!sayQ.length) {
-      sayNow = null;
-      $('sayWhere').textContent = '';
-      $('sayName').textContent = 'That is the lot.';
-      $('sayGuide').classList.add('hidden');
-      $('sayFeedback').textContent = 'Go back and pick another part of the menu.';
-      $('sayShow').disabled = true;
-      $('sayHear').disabled = true;
-      $('sayGot').disabled = true;
-      $('sayAgain').disabled = true;
-      paintSayScore();
-      return;
-    }
-
-    sayNow = sayQ.shift();
-    $('sayShow').disabled = false;
-    $('sayHear').disabled = !speechOn();
-    $('sayGot').disabled = false;
-    $('sayAgain').disabled = false;
-
-    $('sayWhere').textContent = whereOf(sayNow);
-    $('sayName').textContent = sayNow.name;
-
-    var guide = $('sayGuide');
-    guide.textContent = sayNow.say || 'Nothing tricky here — it reads as it looks.';
-    guide.classList.add('hidden');
-
-    $('sayFeedback').textContent = 'Say it out loud first.';
-    paintSayScore();
-  }
-
+  // Where an item sits, for the label above a card. Mixed groups prefix the
+  // course with where it came from, so a card reads "Champagne and Wine · Red".
   function whereOf(item) {
     return item.from ? item.from + ' · ' + item.section : item.section;
   }
-
-  function paintSayScore() {
-    $('sayScore').innerHTML = '<b>' + learnedCount(current.items) + '</b> / ' + current.items.length;
-  }
-
-  $('sayShow').addEventListener('click', function () {
-    $('sayGuide').classList.toggle('hidden');
-  });
-
-  $('sayHear').addEventListener('click', function () {
-    if (sayNow) sayItem(sayNow);
-  });
-
-  $('sayGot').addEventListener('click', function () {
-    if (!sayNow) return;
-    markLearned(sayNow, true);
-    nextSay();
-  });
-
-  $('sayAgain').addEventListener('click', function () {
-    if (!sayNow) return;
-    markLearned(sayNow, false);
-    sayQ.push(sayNow);
-    nextSay();
-  });
 
   // ---------- what is it? / name it ----------
   // One screen, two directions. `cardMode` is 'what' (name on the front) or
